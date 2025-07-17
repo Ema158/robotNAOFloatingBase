@@ -1,0 +1,5 @@
+function XD = FloatingBaseSimulationV5FeatherstoneEma(t,X0)
+global robot tau
+robot = robot_move(robot,X0(1:30));
+q = X0(1:30); %q = [0pB,0etaB,qJ]
+qD
