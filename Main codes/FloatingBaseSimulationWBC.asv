@@ -19,12 +19,8 @@ A2 = [robot.J_RAnkle, zeros(6,12)];
 b2 = -JQpqpR;
 A3 = [robot.J_LAnkle, zeros(6,12)];
 b3 = -JQpqpL;
-% A = [A1;A2;A3];
-% b = [b1;b2;b3];
-A = [A1;A3];
-b = [b1;b3];
-% A = [A1];
-% b = [b1];
+A = [A1;A2;A3];
+b = [b1;b2;b3];
 qppRef = PDreferenceAcceleration(q,qD);
 
 wBase = 10000; wJoints = 1000; wForces = 1;
@@ -38,9 +34,8 @@ Q(7+numJoints:end,7+numJoints:end) = QF;
 Q1 = Q(1:6+numJoints,1:6+numJoints);
 p = [-(qppRef')*Q1 zeros(1,12)];
 
-options = optimset('Display', 'off');
-x = quadprog(Q,p,[],[],A,b,[],[],[],options);
-qpp = x(1:numJoints+6);
+% x = quadprog(Q,p,[],[],A,b);
+% qpp = x(1:numJoints+6);
 % tau = zeros(30,1);
 % tau(12) = 0.001;
 % qpp = H\(-C + tau);
