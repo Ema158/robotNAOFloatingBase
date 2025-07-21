@@ -10,6 +10,16 @@ cd(currentfolder);   % return to the original path
 % ---------------------------------------------------------------------------------------------
 
 echo on
+% Testing Essential dynamics standing on one foot
+% ==============================
+% Creation: 28/Ago/2024
+% Last modification: -/--/--
+% --------------------------------------------------------------------------------------------------
+% Robot stands in one foot and regulates 
+% -----------------------------------------------------------------------------------------------------
+% --------------------------------------------------------------------------------------------------
+% 
+%
 echo off
 
 global gait_parameters
@@ -23,6 +33,11 @@ Nao_param = ParamTest1();
 % ---------------------------------------------------------
 gait_parameters = Nao_param.gait_parameters;
 % 
+% T = gait_parameters.T;
+% g = gait_parameters.g;
+% z0 = gait_parameters.z_i;
+% S = gait_parameters.S;
+% D = gait_parameters.y_ffoot_i;
 
 % CHOSING CONTROLLED VARIABLE FILES
 % -------------------------------------------------------------------------------------------------
@@ -39,13 +54,17 @@ DataName = 'InfoNAO_FloatingBase5';
 NameAnim = ['anim_', DataName];
 robot = genebot();
 time_step = 0.01;
-T = 15;
+T = 0.5;
 samples = T/time_step;
 current_time = 0;
 X0 = zeros(60,1);
 X0(1:30) = robot.q; %[0pB,0etaB,qJ]
 X0(31:60) = zeros(30,1); %[0vB,0wB,qDJ]
+% X0(31) = 2;
+% X0(33) = 3;
+% X0(34) = 3;
 Xt = zeros(samples+1,length(X0));
+tauT = zeros(samples+1,24);
 CoM = zeros(samples+1,3);
 t = zeros(samples+1,1);
 t(1) = current_time;
@@ -53,12 +72,8 @@ Xt(1,:) = X0';
 tauT(1,:) = zeros(1,24);
 CoM(1,:) = robot.CoM';
 for i=1:samples
-    if i==100
-        ema=1;
-    end
     timespan = [current_time, current_time + time_step];
-%     Xtaux = ode4(@FloatingBaseSimulationWBC,timespan,X0);
-    Xtaux = ode4(@FloatingTestM10,timespan,X0);
+    Xtaux = ode4(@FloatingBaseSimulationV5FeatherstoneEma,timespan,X0);
     Xt(i+1,:) = Xtaux(end,:);
     tauT(i+1,:) = tau';
     CoM(i+1,:) = robot.CoM';
@@ -83,7 +98,6 @@ hold on
 plot(t,Xt(:,5))
 plot(t,Xt(:,6))
 grid on
-%
 
 figure(4)
 plot(t,tauT(:,1))
@@ -91,7 +105,6 @@ hold on
 plot(t,tauT(:,2))
 grid on
 %
-
 qt = Xt(:,1:30)';
 %
 samplesPerSecond = 5;

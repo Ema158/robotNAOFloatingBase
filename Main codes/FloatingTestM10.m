@@ -8,18 +8,16 @@ w1 = X0(34:36);
 v1 = X0(31:33);
 
 [H,C] = ForwardDynamics(q,qD); %
-[aBaseFrame1,tau] = testID(H(1:6,1:6),H(1:6,7:end),H(7:end,7:end),C(1:6),C(7:end));
+qpp = zeros(24,1);
+qpp(1) = -0.1;
+[aBaseFrame1,tau] = testID(H(1:6,1:6),H(1:6,7:end),H(7:end,7:end),C(1:6),C(7:end),qpp);
 T = robot.T;
 X10 = VelocityMatrix(T(:,:,1));
 aBaseFrame0 = X10\aBaseFrame1;
 
-qpp = zeros(30,1);
-qpp(1:6) = aBaseFrame0;
-qpp(7) = -0.1;
-
 qD(1:3) = v1 + cross_matrix(w1)*q(1:3);
 qD(4:6) = OmeRPY(q(6),q(5))*w1; %qD = [vB,etaBD,qjD]
-qDD = [qpp(4:6);qpp(1:3);qpp(7:end)]; %qDD = [vBD,wBD,qjDD]
+qDD = [aBaseFrame0(4:6);aBaseFrame0(1:3);qpp]; %qDD = [vBD,wBD,qjDD]
 XD = [qD; qDD]; %XD = [vB,wD,qjD][vBD,wBD,qjDD]
 end
 

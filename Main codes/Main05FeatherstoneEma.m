@@ -54,12 +54,15 @@ DataName = 'InfoNAO_FloatingBase5';
 NameAnim = ['anim_', DataName];
 robot = genebot();
 time_step = 0.01;
-T = 12;
+T = 15;
 samples = T/time_step;
 current_time = 0;
 X0 = zeros(60,1);
 X0(1:30) = robot.q; %[0pB,0etaB,qJ]
 X0(31:60) = zeros(30,1); %[0vB,0wB,qDJ]
+% X0(31) = 2;
+% X0(33) = 3;
+% X0(34) = 3;
 Xt = zeros(samples+1,length(X0));
 tauT = zeros(samples+1,24);
 CoM = zeros(samples+1,3);
@@ -83,10 +86,10 @@ figure(2)
 plot(t,Xt(:,1))
 hold on
 plot(t,Xt(:,2))
-plot(t,Xt(:,3))
+% plot(t,Xt(:,3))
 plot(t,CoM(:,1),'k')
 plot(t,CoM(:,2),'k')
-plot(t,CoM(:,3),'k')
+% plot(t,CoM(:,3),'k')
 grid on
 %
 figure(3)

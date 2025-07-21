@@ -20,9 +20,6 @@ function [H,C] = ForwardDynamics(q,qD)
   H(7:end,7:end) = HJ;
   H(1:6,7:end) = F2;
   H(7:end,1:6) = F2';
-  
-%   qpp = H\([zeros(6,1);tau] - C);
-% %   qpp(7:end) = zeros(24,1);
 end
 
 
@@ -41,11 +38,11 @@ J = cell(frames,1);
 velVec = cell(frames,1);
 accVec = cell(frames,1);
 velVec{1} = qD(1:6); %baseVel
-g = 0; %9.81
-accVec{1} = [0;0;0;0;0;g]; %baseAcc relative to base
+gravityFactor = 1; %9.81
 X{1} = VelocityMatrix(T(:,:,1));
+accVec{1} = X{1}*[0;0;0;0;0;gravityFactor*9.81]; %baseAcc relative to base
 J{1} = inertiaMatrix(I{1},M(1),CoM_j{1});
-f{1} = J{1}*accVec{1} + crm(velVec{1})*J{1}*velVec{1};
+f{1} = J{1}*accVec{1} + crf(velVec{1})*J{1}*velVec{1};
 S = [0;0;1;0;0;0];
 %% Forward pass
 for i=2:frames
