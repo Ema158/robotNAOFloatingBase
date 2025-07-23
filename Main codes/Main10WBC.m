@@ -39,19 +39,16 @@ DataName = 'InfoNAO_FloatingBase5';
 NameAnim = ['anim_', DataName];
 robot = genebot();
 time_step = 0.01;
-T = 4;
+T = 10;
 samples = T/time_step;
 current_time = 0;
-X0 = zeros(63,1);
+X0 = zeros(60,1);
 X0(1:30) = robot.q; %[0pB,0etaB,qJ]
-X0(1) = 0.01;
-X0(2) = 0.02;
-X0(3) = 0.05;
-X0(4) = 0.2;
-X0(5) = 0.2;
-X0(6) = 0.2;
-X0(32:63) = zeros(32,1); %[0vB,0wB,qDJ]
-X0(63) = 0.05;
+% X0(4) = 0.2;
+% X0(5) = 0.2;
+% X0(6) = 0.2;
+X0(31:61) = zeros(31,1); %[0vB,0wB,qDJ]
+X0(61) = 0.01;
 % X0(33) = 2;
 % X0(34) = 2;
 Xt = zeros(samples+1,length(X0));
@@ -78,9 +75,9 @@ plot(t,Xt(:,1))
 hold on
 plot(t,Xt(:,2))
 plot(t,Xt(:,3))
-plot(t,CoM(:,1),'k')
-plot(t,CoM(:,2),'k')
-plot(t,CoM(:,3),'k')
+% plot(t,CoM(:,1),'k')
+% plot(t,CoM(:,2),'k')
+% plot(t,CoM(:,3),'k')
 grid on
 %
 figure(3)
@@ -97,14 +94,17 @@ hold on
 plot(t,tauT(:,2))
 grid on
 %
-
+figure(5)
+plot(t,Xt(:,61))
+grid on
+%
 qt = Xt(:,1:30)';
 %
 samplesPerSecond = 5;
 samplesAnimation = round(T*samplesPerSecond);
 %% Walking ANIMATION
 % ==============================================================================
-figure(5)
+figure(6)
 if anim    
     dataS = cell(1,1); % Sampled joint positions
     disp('Animation...')
