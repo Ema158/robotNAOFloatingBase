@@ -6,8 +6,6 @@ qD = X0(31:end); %qD = [0vB,0wB,qjD]
 w1 = X0(34:36);
 v1 = X0(31:33);
 qDDJ = zeros(24,1);
-% qDDJ(13) = -0.1;
-% qDDJ(18) = -0.1;
 qDDJ(1) = -0.1;
 [baseAcc,tau] = RNEAFBV5FeatherstoneEma(q,qD,qDDJ); %q = [pB,etaB,qJ] qD = [vB,wB,qjD]
 qD(1:3) = v1 + cross_matrix(w1)*q(1:3);

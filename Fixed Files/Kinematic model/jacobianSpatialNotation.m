@@ -35,7 +35,7 @@ for i=(n-1):-1:2
 end
 Jac(:,1:6) = Xn{1}*X{1};
 X80 = VelocityMatrix(T(:,:,8)); %X80
-% Jac = inv(X80)*Jac;
+Jac = X80\Jac;
 end
 
 function m = crm(v)

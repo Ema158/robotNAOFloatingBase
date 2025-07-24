@@ -1,6 +1,6 @@
 % If you want to fold the code for each section in YOUR MATLAB go to
 %    Editor/Debugger (MATLAB Preferences) > Code Folding and enable "Sections" by checking on it
-function PI = Mass_information
+function PI = Mass_information(robot)
 %% Version of the  23 April 2025
 
 %% I.   Masses - Center of Masses - Inertia Tensors
@@ -361,25 +361,9 @@ I{28}=zeros(3,3);
 %% III. Transformation matrices w.r.t frame 0 (Tip of the RFoot)
 joints = 30;
 q = zeros(joints,1); 
-qD = zeros(joints,1);
-robot = struct('joints',joints,'q',q,'qD',qD);
+robot.q = q;
 T0=DGM(robot);
   
-%% IV.  Calculation of I. in M-DH frames
-
-% Base change I_j = inv(P_j) I_j_s P_j
-
-% Transport I_j = I_j_s + M Y_s
-% with Y_s = [b^2+c^2,-a*b,-a*c;
-%             -a*b,c^2+a^2,-b*c;
-%             -a*c,-b*c,a^2+b^2]:
-% Knowing CoM = [a;b;c];
-
-% Transport of the CoM 
-% d_xg = d_x - d_x_0
-% d_yg = d_y - d_y_0
-% d_zg = d_z - d_z_0
-
 % % Rotation matrices 
 P = cell(1,28);
 for i = 1:28
@@ -389,13 +373,6 @@ PI.IG1 = I{1};
 for i = 1 : 28
     inter = CoM{i};
     CoM{i} = P{i}*inter; 
-
-%     Y = [inter(2)^2+inter(3)^2,-inter(1)*inter(2),-inter(1)*inter(3);
-%      -inter(1)*inter(2),inter(3)^2+inter(1)^2,-inter(2)*inter(3);
-%      -inter(1)*inter(3),-inter(2)*inter(3),inter(1)^2+inter(2)^2];
-% 
-%     I{i} = I{i} + M(i) * (Y);   % application of translation  % SIj = bIb + Mj*Yj  "S" is the Aldebaran frame 
-%     I{i} = P{i} * I{i} * P{i}'; % application of rotation % jIj = jRb bIj bRj 
 end
 
 PI.masse = M;

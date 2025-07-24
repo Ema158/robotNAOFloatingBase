@@ -66,11 +66,11 @@ robot.Tconst = Tconst;
 baseDof = 6;
 q = zeros(joints,1);
 
-q(1) = -0.04;
-q(2) = 0.01; %0.05
-q(3) = -0.02; %0.25
-q(4) = 0.2;
-q(5) = 0.2;
+q(1) = 0;
+q(2) = 0; %0.05
+q(3) = 0; %0.25
+q(4) = 0;
+q(5) = 0;
 q(6) = 0;
 %
 q(1+baseDof) = 0;
@@ -106,7 +106,7 @@ robot.qdes = desiredPosture(joints);
 robot.T = DGM(robot); % Modelo geométrico directo (calcula las matrices de transformación elementales del robot),
                        % y las asigna a la estructura "robot" en la variable T.                       
 %% Robot mass information
-InertialParameters = Mass_information();
+InertialParameters = Mass_information(robot);
 M = InertialParameters.masse;
 robot.mass = sum(M);
 robot.InertialParameters = InertialParameters;

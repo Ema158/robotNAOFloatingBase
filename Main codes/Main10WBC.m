@@ -12,41 +12,21 @@ cd(currentfolder);   % return to the original path
 echo on
 echo off
 
-global gait_parameters
 global robot coms tau
 tau = zeros(24,1);
 coms=0;
 anim=true;
-% Parameters
-% ---------------------------------------------------------
-Nao_param = ParamTest1();
-% ---------------------------------------------------------
-gait_parameters = Nao_param.gait_parameters;
-% 
-
-% CHOSING CONTROLLED VARIABLE FILES
-% -------------------------------------------------------------------------------------------------
-global OptionContVar  % Option to chose the controlled variables "hd", "hpd" and "hppd"
-% 1 -> Controlled variables defined by polynomials w.r.t. time, IMPACT is considered. Files: "hd_Polyn", "hpd_Polyn_t" and "hppd_Polyn_t". 
-% 2 -> Controlled variables defined by cycloidal motion w.r.t. time, IMPACT is NOT considered. Files: "hd_CycMotion_t", "hpd_CycMotion_t" and "hppd_CycMotion_t". 
-% 3 -> Controlled variables defined by polynomials w.r.t. "x" of the CoM, IMPACT is considered. Files: "hd_Polyn", "hpd_Polyn_x" and "hppd_Polyn_x". 
-OptionContVar = Nao_param.ControlledVariableOption;
-% -------------------------------------------------------------------------------------------------
-
 % GENERAL OPTIONS
 % ----------------------------------------------------
 DataName = 'InfoNAO_FloatingBase5';
 NameAnim = ['anim_', DataName];
 robot = genebot();
 time_step = 0.01;
-T = 10;
+T = 1;
 samples = T/time_step;
 current_time = 0;
 X0 = zeros(60,1);
 X0(1:30) = robot.q; %[0pB,0etaB,qJ]
-% X0(4) = 0.2;
-% X0(5) = 0.2;
-% X0(6) = 0.2;
 X0(31:61) = zeros(31,1); %[0vB,0wB,qDJ]
 X0(61) = 0.01;
 % X0(33) = 2;
@@ -95,7 +75,7 @@ plot(t,tauT(:,2))
 grid on
 %
 figure(5)
-plot(t,Xt(:,61))
+% plot(t,Xt(:,61))
 grid on
 %
 qt = Xt(:,1:30)';

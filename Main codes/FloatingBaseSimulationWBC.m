@@ -62,7 +62,6 @@ qpp = x(1:numJoints+6);
 % tau(12) = 0.001;
 % qpp = H\(-C + tau);
 xp2 = robot.J_RAnkle*qD;
-accVec = ForwardVelAcc(q,qD);
 
 qD(1:3) = v1 + cross_matrix(w1)*q(1:3);
 qD(4:6) = OmeRPY(q(6),q(5))*w1; %qD = [vB,etaBD,qjD]
