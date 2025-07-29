@@ -16,9 +16,9 @@ J_Lankle = [robot.J_LAnkle(4:6,:);robot.J_LAnkle(1:3,:)];
 J_Rankle = [J_Rankle(:,4:6),J_Rankle(:,1:3),J_Rankle(:,7:end)];
 J_Lankle = [J_Lankle(:,4:6),J_Lankle(:,1:3),J_Lankle(:,7:end)];
 
-[JSpatialR,JpqpSpatialR,JSpatialL,JpqpSpatialL] = jacobianSpatialNotation(robot,zeros(6,1),qD);
+[JSpatial,b] = jacobianSpatialNotation(robot,zeros(6,1),qD);
 % J = [J_Rankle;J_Lankle];
-J = [JSpatialR;JSpatialL];
+J = [JSpatial;J_Lankle];
 Hu = H(1:6,:); Cu = C(1:6); Ju = J';
 Ju = Ju(1:6,:);
 % Ju(1:6,1:6) = Ju(1:6,1:6)*inv(X10);
@@ -27,21 +27,20 @@ Ju(1:6,1:6) = Ju(1:6,1:6);
 A1 = [Hu,Ju];
 b1 = -Cu;
 [JQpqpR,JQpqpL] = JQp_qpFeet(robot);
-JRaux = JSpatialR;
+JRaux = JSpatial;
 % JRaux(1:6,1:6) = J_Rankle(1:6,1:6)*inv(X10);
-JRaux(1:6,1:6) = JSpatialR(1:6,1:6);
+JRaux(1:6,1:6) = JSpatial(1:6,1:6);
 A2 = [JRaux, zeros(6,12)];
-% b2 = -JQpqpR;
-b2 = -JpqpSpatialR;
-JLaux = JSpatialL;
+b2 = -JQpqpR;
+JLaux = J_Lankle;
 % JLaux(1:6,1:6) = J_Lankle(1:6,1:6)*inv(X10);
-JLaux(1:6,1:6) = JSpatialL(1:6,1:6);
+JLaux(1:6,1:6) = J_Lankle(1:6,1:6);
 A3 = [JLaux, zeros(6,12)];
-b3 = -JpqpSpatialL;
-A = [A1;A2;A3];
-b = [b1;b2;b3];
-% A = [A1;A3];
-% b = [b1;b3];
+b3 = -JQpqpL;
+% A = [A1;A2;A3];
+% b = [b1;b2;b3];
+A = [A1;A3];
+b = [b1;b3];
 % A = A1;
 % b = b1;
 qppRef = PDreferenceAcceleration(q,qD);
@@ -73,7 +72,7 @@ qD(1:3) = v1 + cross_matrix(w1)*q(1:3);
 qD(4:6) = OmeRPY(q(6),q(5))*w1; %qD = [vB,etaBD,qjD]
 
 qDD = [aBaseFrame0(4:6);aBaseFrame0(1:3);qpp(7:end)]; %qDD = [vBD,wBD,qjDD]
-XD = [qD; qDD; xp2(6)]; %XD = [vB,wD,qjD][vBD,wBD,qjDD]
+XD = [qD; qDD; xp2(5)]; %XD = [vB,wD,qjD][vBD,wBD,qjDD]
 end
 
 function X = VelocityMatrix(T)

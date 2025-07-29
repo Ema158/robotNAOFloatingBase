@@ -20,7 +20,7 @@ JpqpL = zeros(6,1);
 for i=2:frames
     piTi(:,:,i) = inverseTransMatrix(T(:,:,ant(i)))*T(:,:,i);
 end
-velVec{1} = qD(1:6);
+velVec{1} = baseVel1;
 for i=2:frames
     X{i} = VelocityMatrix(piTi(:,:,i));
     if act(i)~=0
@@ -45,17 +45,17 @@ JpqpR = R08_6*JpqpR;
 
 n = 15;
 Xn{n-1} = X{n};
-for i=(n-1):-1:9
+for i=(n-1):-1:2
        JacL(:,act(i)+baseDof) = Xn{i}*S;
        JpqpL = JpqpL + Xn{i}*crossTerm{i};
        Xn{ant(i)} = Xn{i}*X{i}; 
 end
-JacL(:,1:6) = Xn{1}*eye(6,6);
-R015_6 = zeros(6,6);
-R015_6(1:3,1:3) = T(1:3,1:3,15);
-R015_6(4:6,4:6) = T(1:3,1:3,15);
-JacL = R015_6*JacL;
-JpqpL = R015_6*JpqpL;
+JacR(:,1:6) = Xn{1}*eye(6,6);
+R08_6 = zeros(6,6);
+R08_6(1:3,1:3) = T(1:3,1:3,8);
+R08_6(4:6,4:6) = T(1:3,1:3,8);
+JacR = R08_6*JacR;
+JpqpR = R08_6*JpqpR;
 end
 
 function m = crm(v)

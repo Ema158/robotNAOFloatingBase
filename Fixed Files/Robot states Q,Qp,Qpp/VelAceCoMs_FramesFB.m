@@ -19,6 +19,7 @@ VPi = cell(1,frames);   % Aceleracion lineal del marco i
 AceFrame_i = cell(1,frames);  % Aceleración (lineal y angular) del Marco i 
 
 % Inicialización
+
 X10 = VelocityMatrix(T(:,:,1));
 qp(1:6) = X10*[qp(4:6);qp(1:3)]; %[w,v]
 P{1} = T(1:3,4,1);
