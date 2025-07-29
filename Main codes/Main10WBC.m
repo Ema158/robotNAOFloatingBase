@@ -25,10 +25,9 @@ time_step = 0.01;
 T = 3;
 samples = T/time_step;
 current_time = 0;
-X0 = zeros(61,1);
+X0 = zeros(60,1);
 X0(1:30) = robot.q; %[0pB,0etaB,qJ]
 X0(31:60) = zeros(30,1); %[0vB,0wB,qDJ]
-X0(61) = -0.280116324241585;
 Xt = zeros(samples+1,length(X0));
 CoM = zeros(samples+1,3);
 t = zeros(samples+1,1);
@@ -57,27 +56,22 @@ plot(t,CoM(:,1),'k')
 plot(t,CoM(:,2),'k')
 plot(t,CoM(:,3),'k')
 grid on
-%
+
 figure(3)
 plot(t,Xt(:,4))
 hold on
 plot(t,Xt(:,5))
 plot(t,Xt(:,6))
 grid on
-%
 
 figure(4)
 plot(t,tauT(:,1))
 hold on
 plot(t,tauT(:,2))
 grid on
-%
-figure(5)
-plot(t,Xt(:,61))
-grid on
-%
+
 qt = Xt(:,1:30)';
-%
+
 samplesPerSecond = 5;
 samplesAnimation = round(T*samplesPerSecond);
 %% Walking ANIMATION

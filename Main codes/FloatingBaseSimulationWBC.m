@@ -3,7 +3,7 @@ global robot
 numJoints = robot.rotationalJoints;
 robot = robot_move(robot,X0(1:30));
 q = X0(1:30); %q = [0pB,0etaB,qJ]
-qD = X0(31:(end-1)); %qD = [0vB,0wB,qjD]
+qD = X0(31:end); %qD = [0vB,0wB,qjD]
 robot.qD = qD;
 w1 = X0(34:36);
 v1 = X0(31:33);
@@ -11,39 +11,21 @@ T = robot.T;
 X10 = VelocityMatrix(T(:,:,1));
 
 [H,C] = ForwardDynamics(q,qD); %
-J_Rankle = [robot.J_RAnkle(4:6,:);robot.J_RAnkle(1:3,:)];
-J_Lankle = [robot.J_LAnkle(4:6,:);robot.J_LAnkle(1:3,:)];
-J_Rankle = [J_Rankle(:,4:6),J_Rankle(:,1:3),J_Rankle(:,7:end)];
-J_Lankle = [J_Lankle(:,4:6),J_Lankle(:,1:3),J_Lankle(:,7:end)];
 
-[JSpatialR,JpqpSpatialR,JSpatialL,JpqpSpatialL] = jacobianSpatialNotation(robot,zeros(6,1),qD);
-% J = [J_Rankle;J_Lankle];
+[JSpatialR,JpqpSpatialR,JSpatialL,JpqpSpatialL] = jacobianSpatialNotation(robot,qD);
 J = [JSpatialR;JSpatialL];
 Hu = H(1:6,:); Cu = C(1:6); Ju = J';
 Ju = Ju(1:6,:);
-% Ju(1:6,1:6) = Ju(1:6,1:6)*inv(X10);
 Ju(1:6,1:6) = Ju(1:6,1:6);
 
 A1 = [Hu,Ju];
 b1 = -Cu;
-[JQpqpR,JQpqpL] = JQp_qpFeet(robot);
-JRaux = JSpatialR;
-% JRaux(1:6,1:6) = J_Rankle(1:6,1:6)*inv(X10);
-JRaux(1:6,1:6) = JSpatialR(1:6,1:6);
-A2 = [JRaux, zeros(6,12)];
-% b2 = -JQpqpR;
+A2 = [JSpatialR, zeros(6,12)];
 b2 = -JpqpSpatialR;
-JLaux = JSpatialL;
-% JLaux(1:6,1:6) = J_Lankle(1:6,1:6)*inv(X10);
-JLaux(1:6,1:6) = JSpatialL(1:6,1:6);
-A3 = [JLaux, zeros(6,12)];
+A3 = [JSpatialL, zeros(6,12)];
 b3 = -JpqpSpatialL;
 A = [A1;A2;A3];
 b = [b1;b2;b3];
-% A = [A1;A3];
-% b = [b1;b3];
-% A = A1;
-% b = b1;
 qppRef = PDreferenceAcceleration(q,qD);
 
 wBase = 1000; wJoints = 1; wForces = 1; %[A1]
@@ -62,18 +44,12 @@ x = quadprog(Q,p,[],[],A,b,[],[],[],options);
 qpp = x(1:numJoints+6);
 aBaseFrame1 = qpp(1:6);
 aBaseFrame0 = X10\aBaseFrame1;
-% tau = zeros(30,1);
-% tau(12) = 0.001;
-% qpp = H\(-C + tau);
-emaAux = X10*[qD(4:6);qD(1:3)];
-xp2 = JRaux*[emaAux;qD(7:end)];
-% xp2 = robot.J_RAnkle*[qD(4:6);qD(1:3);qD(7:end)];
 qD(1:3) = v1 + cross_matrix(w1)*q(1:3);
 
 qD(4:6) = OmeRPY(q(6),q(5))*w1; %qD = [vB,etaBD,qjD]
 
 qDD = [aBaseFrame0(4:6);aBaseFrame0(1:3);qpp(7:end)]; %qDD = [vBD,wBD,qjDD]
-XD = [qD; qDD; xp2(6)]; %XD = [vB,wD,qjD][vBD,wBD,qjDD]
+XD = [qD; qDD]; %XD = [vB,wD,qjD][vBD,wBD,qjDD]
 end
 
 function X = VelocityMatrix(T)

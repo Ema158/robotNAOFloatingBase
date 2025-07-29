@@ -1,4 +1,4 @@
-function [JacR,JpqpR,JacL,JpqpL] = jacobianSpatialNotation(robot,baseVel1,qD)
+function [JacR,JpqpR,JacL,JpqpL] = jacobianSpatialNotation(robot,qD)
 baseDof = 6;
 act = robot.act;
 ant = robot.ant;
