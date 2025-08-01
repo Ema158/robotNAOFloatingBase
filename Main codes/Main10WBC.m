@@ -12,8 +12,9 @@ cd(currentfolder);   % return to the original path
 echo on
 echo off
 
-global robot coms tau
+global robot coms tau mom
 tau = zeros(24,1);
+mom = zeros(6,1);
 coms=0;
 anim=true;
 % GENERAL OPTIONS
@@ -21,6 +22,7 @@ anim=true;
 DataName = 'InfoNAO_FloatingBase5';
 NameAnim = ['anim_', DataName];
 robot = genebot();
+robot_draw(robot)
 time_step = 0.01;
 T = 3;
 samples = T/time_step;
@@ -34,13 +36,16 @@ t = zeros(samples+1,1);
 t(1) = current_time;
 Xt(1,:) = X0';
 tauT(1,:) = zeros(1,24);
+momT(1,:) = zeros(1,6);
 CoM(1,:) = robot.CoM';
 for i=1:samples
     timespan = [current_time, current_time + time_step];
-    Xtaux = ode4(@FloatingBaseSimulationWBC,timespan,X0);
+%     Xtaux = ode4(@FloatingBaseSimulationWBC,timespan,X0);
+    Xtaux = ode4(@FloatingBaseSimulationCentroidalWBC,timespan,X0);
 %     Xtaux = ode4(@FloatingTestM10,timespan,X0);
     Xt(i+1,:) = Xtaux(end,:);
     tauT(i+1,:) = tau';
+    momT(i+1,:) = mom';
     CoM(i+1,:) = robot.CoM';
     t(i+1) = current_time + time_step;
     X0 = Xtaux(end,:)';
@@ -65,10 +70,9 @@ plot(t,Xt(:,6))
 grid on
 
 figure(4)
-plot(t,tauT(:,1))
+plot(t,momT(:,4))
 hold on
-plot(t,tauT(:,2))
-grid on
+plot(t,momT(:,6))
 
 qt = Xt(:,1:30)';
 
@@ -76,7 +80,6 @@ samplesPerSecond = 5;
 samplesAnimation = round(T*samplesPerSecond);
 %% Walking ANIMATION
 % ==============================================================================
-figure(6)
 if anim    
     dataS = cell(1,1); % Sampled joint positions
     disp('Animation...')

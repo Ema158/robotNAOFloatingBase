@@ -66,25 +66,25 @@ robot.Tconst = Tconst;
 baseDof = 6;
 q = zeros(joints,1);
 
-q(1) = -0.05;
-q(2) = 0.0; 
-q(3) = 0.0; 
-q(4) = 0.2; 
-q(5) = 0.2;
-q(6) = 0.2;
+q(1) = 0.00;
+q(2) = 0.00; 
+q(3) = 0.01; 
+q(4) = 0.0; 
+q(5) = 0.0;
+q(6) = 0.0;
 %
 q(1+baseDof) = 0;
 q(2+baseDof) = 0; 
-q(3+baseDof) = -0.6; %-0.6
-q(4+baseDof) = 0.7;  %0.7
-q(5+baseDof) = -0.1; %-0.1
+q(3+baseDof) = -0.9; %-0.6
+q(4+baseDof) = 1.3;  %0.7
+q(5+baseDof) = -0.4; %-0.1
 q(6+baseDof) = 0;
 
 q(7+baseDof) = 0;
 q(8+baseDof) = 0;
-q(9+baseDof) = -0.2; %-0.2
-q(10+baseDof) = 0.8; %0.8
-q(11+baseDof) = -0.6; %-0.6
+q(9+baseDof) = -0.9; %-0.2
+q(10+baseDof) = 1.3; %0.8
+q(11+baseDof) = -0.4; %-0.6
 q(12+baseDof) = 0;
 %
 q(13+baseDof) = 1.6; %1.6
@@ -112,7 +112,6 @@ robot.mass = sum(M);
 robot.InertialParameters = InertialParameters;
 % 
 [robot.CoM,robot.J_CoM,robot.J_RAnkle,robot.J_LAnkle,robot.crossM,robot.J_CoMs] = compute_comV2(robot);
-robot_draw(robot)
 %% RAnkle frame (8) to world frame
 robot.foot_Rf = [ 0  0  1 0;
                   0 -1  0 0;
