@@ -1,5 +1,5 @@
-function XD = FloatingBaseSimulationCentroidalWBC(t,X0)
-global robot mom F FR FL
+function XD = FloatingBaseSimulationCentroidalWBCOneFoot(t,X0)
+global robot mom F
 numJoints = robot.rotationalJoints;
 robot = robot_move(robot,X0(1:30));
 q = X0(1:30); %q = [0pB,0etaB,qJ]
@@ -17,38 +17,40 @@ qDaux(1:6) = X10*[qDaux(4:6);qDaux(1:3)];
 mom = AG*qDaux;
 
 [JSpatialR,JpqpSpatialR,JSpatialL,JpqpSpatialL] = jacobianSpatialNotation(robot,qD);
-J = [JSpatialR;JSpatialL];
+J = JSpatialR;
 Hu = H(1:6,:); Cu = C(1:6); Ju = J';
 Ju = Ju(1:6,:);
 Ju(1:6,1:6) = Ju(1:6,1:6);
 
-A1 = [Hu,Ju];
+A1 = [Hu,-Ju];
 b1 = -Cu;
-A2 = [JSpatialR, zeros(6,12)];
+A2 = [JSpatialR, zeros(6,6)];
 b2 = -JpqpSpatialR;
 A3 = [JSpatialL, zeros(6,12)];
 b3 = -JpqpSpatialL;
-A = [A1;A2;A3];
-b = [b1;b2;b3];
+A = [A1;A2];
+b = [b1;b2];
 qppRef = PDreferenceAcceleration(q,qD);
 hGp = PDreferenceMomentumRate(AG,qD);
 
 wCoML = 10000; wCoMK = 0; wBase = 1; wJoints = 1; wForces = 1; %[A1]
-Q = zeros(numJoints+18,numJoints+18); %joints + 6 (floatingBase) + 12 (external forces on feet)
+Q = zeros(numJoints+12,numJoints+12); %joints + 6 (floatingBase) + 12 (external forces on feet)
 QJ = zeros(numJoints+6,numJoints+6);
 Qc(1:3,1:3) = wCoMK*eye(3,3);
 Qc(4:6,4:6) = wCoML*eye(3,3);
 QJ(1:6,1:6) = wBase*eye(6,6);
 QJ(7:end,7:end) = wJoints*eye(numJoints,numJoints);
-QF = wForces*eye(12,12);
+QF = wForces*eye(6,6);
 Q(1:numJoints+6,1:numJoints+6) = (AG')*Qc*AG + QJ;
 Q(7+numJoints:end,7+numJoints:end) = QF;
-p = [(AGpqp')*Qc*AG - (hGp')*Qc*AG - (qppRef')*QJ,zeros(1,12)];
+p = [(AGpqp')*Qc*AG - (hGp')*Qc*AG - (qppRef')*QJ,zeros(1,6)];
 
 options = optimset('Display', 'off');
 x = quadprog(Q,p,[],[],A,b,[],[],[],options);
-FR = -x(31:36);
-FL = -x(37:42);
+% xAux = Ju*x(31:36);
+F(1:3) = x(34:36);
+F(4:6) = x(31:33);
+% F(4:6) = x(40:42);
 qpp = x(1:numJoints+6);
 aBaseFrame1 = qpp(1:6);
 aBaseFrame0 = X10\aBaseFrame1;

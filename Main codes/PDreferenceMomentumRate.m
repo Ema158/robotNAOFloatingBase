@@ -1,7 +1,9 @@
 function hGd =  PDreferenceMomentumRate(AG,qD)
 cpdes = zeros(3,1);
 kdes = zeros(3,1);
-cdes = [0.05;0.00;0.03];
+% cdes = [0.0174;0.00;0.00];
+% cdes = [0.05;-0.05;0.015];
+cdes = [0.03;-0.05;0];
 hGd = zeros(6,1);
 global robot
 m = robot.mass;
