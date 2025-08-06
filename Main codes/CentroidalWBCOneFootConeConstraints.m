@@ -25,7 +25,7 @@ Hu = H(1:6,:); Cu = C(1:6); Ju = J';
 Ju = Ju(1:6,:);
 Ju(1:6,1:6) = Ju(1:6,1:6);
 
-A1 = [Hu,Ju,zeros(6,16)];
+A1 = [Hu,-Ju,zeros(6,16)];
 b1 = -Cu;
 A2 = [JSpatialR, zeros(6,6), zeros(6,16)];
 b2 = -JpqpSpatialR;
@@ -33,13 +33,13 @@ M = matrixVertex();
 [Afeq,bfeq,Afineq,bfineq] = frictionConstraints(0.7,M);
 % A = [A1;A2];
 % b = [b1;b2];
-A = [A1;A2;Afeq(1:3,:)];
-b = [b1;b2;bfeq(1:3)];
+A = [A1;A2;Afeq];
+b = [b1;b2;bfeq];
 qppRef = PDreferenceAcceleration(q,qD);
 hGp = PDreferenceMomentumRate(AG,qD);
 
-% wCoML = 10000; wCoMK = 0; wBase = 1; wJoints = 1; wForces = 1; %[A1]
-wCoML = 1; wCoMK = 0; wBase = 1; wJoints = 1; wForces = 1; %[A1]
+wCoML = 10000; wCoMK = 0; wBase = 1; wJoints = 1; wForces = 1; %[A1]
+% wCoML = 1; wCoMK = 0; wBase = 1; wJoints = 1; wForces = 1; %[A1]
 Q = zeros(numJoints+6+6+16,numJoints+6+6+16); %joints + 6 (floatingBase) + 6 (external forces on feet) + 16 coeffForces
 QJ = zeros(numJoints+6,numJoints+6); %joints + 6 (floatingBase)
 Qc(1:3,1:3) = wCoMK*eye(3,3);
@@ -55,8 +55,8 @@ options = optimset('Display', 'off');
 % x = quadprog(Q,p,[],[],A,b,[],[],[],options);
 x = quadprog(Q,p,-Afineq,bfineq,A,b,[],[],[],options);
 
-F(1:3) = -x(34:36);
-F(4:6) = -x(31:33);
+F(1:3) = x(34:36);
+F(4:6) = x(31:33);
 % F(4:6) = x(40:42);
 qpp = x(1:numJoints+6);
 aBaseFrame1 = qpp(1:6);
@@ -143,10 +143,20 @@ function M = matrixVertex()
     FootLength = 0.1;
     v = cell(4,1);
     M = cell(4,1);
-    v{1} = [FootLength/2;FootWidth/2;0];
-    v{2} = [FootLength/2;-FootWidth/2;0];
-    v{3} = [-FootLength/2;-FootWidth/2;0];
-    v{4} = [-FootLength/2;FootWidth/2;0];
+%     v{1} = [FootLength/2;FootWidth/2;0];
+%     v{2} = [FootLength/2;-FootWidth/2;0];
+%     v{3} = [-FootLength/2;-FootWidth/2;0];
+%     v{4} = [-FootLength/2;FootWidth/2;0];
+    
+%     v{1} = [0.1;0.025;0];
+%     v{2} = [0.1;-0.025;0];
+%     v{3} = [-0.05;0.025;0];
+%     v{4} = [-0.05;-0.025;0];
+    
+    v{1} = [0.1;0.01;0];
+    v{2} = [0.1;-0.01;0];
+    v{3} = [-0.05;0.01;0];
+    v{4} = [-0.05;-0.01;0];
     for i=1:4
         M{i} = cross_matrix(v{i});
     end

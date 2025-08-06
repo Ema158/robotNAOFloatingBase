@@ -28,7 +28,7 @@ NameAnim = ['anim_', DataName];
 robot = genebot();
 robot_draw(robot)
 time_step = 0.01;
-T = 3;
+T = 0.4;
 samples = T/time_step;
 current_time = 0;
 X0 = zeros(60,1);
