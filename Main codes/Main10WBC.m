@@ -28,7 +28,7 @@ NameAnim = ['anim_', DataName];
 robot = genebot();
 robot_draw(robot)
 time_step = 0.01;
-T = 0.4;
+T = 4;
 samples = T/time_step;
 current_time = 0;
 X0 = zeros(60,1);
@@ -49,7 +49,8 @@ for i=1:samples
     timespan = [current_time, current_time + time_step];
 %     Xtaux = ode4(@FloatingBaseSimulationWBC,timespan,X0);
 %     Xtaux = ode4(@FloatingBaseSimulationCentroidalWBCOneFoot,timespan,X0);
-    Xtaux = ode4(@CentroidalWBCOneFootConeConstraints,timespan,X0);
+%     Xtaux = ode4(@CentroidalWBCOneFootConeConstraints,timespan,X0);
+    Xtaux = ode4(@CentroidalWBC_ConeConstraints,timespan,X0);
 %     Xtaux = ode4(@FloatingTestM10,timespan,X0);
     Xt(i+1,:) = Xtaux(end,:);
     tauT(i+1,:) = tau';
@@ -122,8 +123,8 @@ if anim
         dataS{1,1} = qS;
     framerate = 10;
 %     animationStandingOnefoot(dataS,1,NameAnim,framerate); % ("parametro"= Numero de pasos a observar al final de la simulaci?n y a grabar en el video
-    animationStandingOnefootForce(dataS,1,NameAnim,framerate,fs); % ("parametro"= Numero de pasos a observar al final de la simulaci?n y a grabar en el video
-%     animationStandingDoublefootForce(dataS,1,NameAnim,framerate,fRs,fLs); % ("parametro"= Numero de pasos a observar al final de la simulaci?n y a grabar en el vide
+%     animationStandingOnefootForce(dataS,1,NameAnim,framerate,fs); % ("parametro"= Numero de pasos a observar al final de la simulaci?n y a grabar en el video
+    animationStandingDoublefootForce(dataS,1,NameAnim,framerate,fRs,fLs); % ("parametro"= Numero de pasos a observar al final de la simulaci?n y a grabar en el vide
     disp(['Animation stored as: ' NameAnim]);
     disp('----------------------------------');
 end

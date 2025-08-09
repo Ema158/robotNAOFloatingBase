@@ -47,8 +47,8 @@ p = [(AGpqp')*Qc*AG - (hGp')*Qc*AG - (qppRef')*QJ,zeros(1,12)];
 
 options = optimset('Display', 'off');
 x = quadprog(Q,p,[],[],A,b,[],[],[],options);
-FR = -x(31:36);
-FL = -x(37:42);
+FR = x(31:36);
+FL = x(37:42);
 qpp = x(1:numJoints+6);
 aBaseFrame1 = qpp(1:6);
 aBaseFrame0 = X10\aBaseFrame1;

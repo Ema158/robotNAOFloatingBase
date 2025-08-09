@@ -170,7 +170,7 @@ end
      end
  end
 %Force plot
-scale = 1/50;
+scale = 1/70;
 ext1 = T(1:3,4,8) + [(-FR(2)/FR(6));(FR(1)/FR(6));0];
 ext2 = ext1 + scale*FR(4:6);
 plot3([ext1(1) ext2(1)],[ext1(2) ext2(2)],[ext1(3) ext2(3)],'k','LineWidth',1);
